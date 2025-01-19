@@ -1,0 +1,16 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "website/__init__.py",
+        "use": "@vercel/python"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "website/__init__.py"
+      }
+    ]
+  }
+  
