@@ -1,0 +1,137 @@
+Home Screen Task List:{
+	<div class="transaction-options" style="overflow-y: auto; overflow-x: hidden; height: 500px; background: #e3e4e3;">
+		<ul class="task-container" style="padding: 0; width: 95%;">
+		
+		<h1 style="margin: 10px 10px 30px 10px; font-size: 30px; font-family: sans-serif; color: black; -webkit-background-clip: initial; -webkit-text-fill-color: black; background: transparent;" align="center">Tasks</h1>
+			{% if Tasks %}
+				{% for Task in Tasks %}
+					<!-- {{ WhichDevice(Task['task_device']) }} {{ DeviceType }} -->
+					{% if WhichDevice(Task['task_device']) == DeviceType or WhichDevice(Task['task_device']) == "JustShow" %}
+						{% if ToInt(CUser['id']) in PythonEval(Task['users_id_done']) and CUser['user_type'] == 'client' %}
+							<li style="list-style: none; background: #ffd0f8; margin-top: 10px; width: 100%; border-radius: 0px; display: flex; align-items: center; justify-content: space-between; opacity: 0.4;">
+								{% if Task['image_raw'] == "Default-Logo" %}
+									<img src="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+								{% else %}
+									{% if ImagePassError(Task['image_raw']) == "false" %}
+										<img src="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+									{% else %}
+										<img src="data:{{ getMIME( Task['image_raw'] ) }};base64,{{ Task['image_raw'] }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+									{% endif %}
+								{% endif %}
+								<div style="width: 40%; margin-left: 20px;">
+									<p align="left">{{ Task['name'] }}</p>
+								</div>
+								<span style="background: #bc0794; padding: 5px; color: white; font-size: 14px;">TT {{ Thousandify(Task['points']) }}</span>
+								<span style="padding: 10px">{{ Task['task_type'] }}</span>
+							</li>
+
+						{% elif Task['task_owner'] == CUser['email'] %}
+							{% if Task['task_type'] == "Ad" %}
+								<div style="position: relative;">
+									<div style="background: black;">
+										<li style="list-style: none; background: #ffd0f8; margin-top: 10px; width: 100%; border-radius: 0px; display: flex; align-items: center; justify-content: space-between; opacity: 0.4;">
+											{% if Task['image_raw'] == "Default-Logo" %}
+												<img src="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+											{% else %}
+												{% if ImagePassError(Task['image_raw']) == "false" %}
+													<img src="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+												{% else %}
+													<img src="data:{{ getMIME( Task['image_raw'] ) }};base64,{{ Task['image_raw'] }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+												{% endif %}
+											{% endif %}
+											<div style="width: 40%; margin-left: 20px;">
+												<p align="left">{{ Task['name'] }}</p>
+											</div>
+											<span style="background: #bc0794; padding: 5px; color: white; font-size: 14px;">TT {{ Thousandify(Task['points']) }}</span>
+											<span style="padding: 10px">{{ Task['task_type'] }}</span>
+										</li>
+									</div>
+
+									<div style="display: flex; align-items: center; justify-content: center; width: 90%; font-weight: bolder; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+										<p align="center" style="color: white; font-weight: 900; font-size: 18px; font-family: 'Lucida Sans';">Ad Under Review <small>(others can't see this)</small></p>
+									</div>
+								</div>
+							{% else %}
+								<a href="/my-task/2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z/{{ Task['id'] }}/2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z" style="text-decoration: none; color: black;">
+									<li style="list-style: none; background: #ffd0f8; margin-top: 10px; width: 100%; border-radius: 0px; display: flex; align-items: center; justify-content: space-between;">
+										{% if Task['image_raw'] == "Default-Logo" %}
+											<img src="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+										{% else %}
+											{% if ImagePassError(Task['image_raw']) == "false" %}
+												<img src="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+											{% else %}
+												<img src="data:{{ getMIME( Task['image_raw'] ) }};base64,{{ Task['image_raw'] }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+											{% endif %}
+										{% endif %}
+										<div style="width: 40%; margin-left: 20px;">
+											<p align="left">{{ Task['name'] }}</p>
+										</div>
+										<span style="background: #bc0794; padding: 5px; color: white; font-size: 14px;">TT {{ Thousandify(Task['points']) }}</span>
+										<span style="padding: 10px">{{ Task['task_type'] }}</span>
+									</li>
+								</a>
+							{% endif %}
+
+						{% elif Task['task_type'] == "Ad" %}
+							{{ pass }}
+
+						{% else %}
+							<a href="/task/{{ RandomID() }}/{{ Task['id'] }}/{{ RandomID() }}" style="text-decoration: none; color: black;">
+								<li style="list-style: none; background: #ffd0f8; margin-top: 10px; width: 100%; border-radius: 0px; display: flex; align-items: center; justify-content: space-between;">
+									{% if Task['image_raw'] == "Default-Logo" %}
+										<img src="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+									{% else %}
+										{% if ImagePassError(Task['image_raw']) == "false" %}
+											<img src="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+										{% else %}
+											<img src="data:{{ getMIME( Task['image_raw'] ) }};base64,{{ Task['image_raw'] }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+										{% endif %}
+									{% endif %}
+									<div style="width: 40%; margin-left: 20px;">
+										<p align="left">{{ Task['name'] }}</p>
+									</div>
+									<span style="background: #bc0794; padding: 5px; color: white; font-size: 14px;">TT {{ Thousandify(Task['points']) }}</span>
+									<span style="padding: 10px">{{ Task['task_type'] }}</span>
+								</li>
+							</a>
+
+						{% endif %}
+						<!-- {{ WhichDevice(Task['task_device']) }} {{ DeviceType }} -->
+					{% else %}
+						<div style="position: relative;">
+							<div style="background: black;">
+								<li style="list-style: none; background: #ffd0f8; margin-top: 10px; width: 100%; border-radius: 0px; display: flex; align-items: center; justify-content: space-between; opacity: 0.4;">
+									{% if Task['image_raw'] == "Default-Logo" %}
+										<img src="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+									{% else %}
+										{% if ImagePassError(Task['image_raw']) == "false" %}
+											<img src="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+										{% else %}
+											<img src="data:{{ getMIME( Task['image_raw'] ) }};base64,{{ Task['image_raw'] }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+										{% endif %}
+									{% endif %}
+									<div style="width: 40%; margin-left: 20px;">
+										<p align="left">{{ Task['name'] }}</p>
+									</div>
+									<span style="background: #bc0794; padding: 5px; color: white; font-size: 14px;">TT {{ Thousandify(Task['points']) }}</span>
+									<span style="padding: 10px">{{ Task['task_type'] }}</span>
+								</li>
+							</div>
+
+							<div style="display: flex; align-items: center; justify-content: center; width: 90%; font-weight: bolder; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+								<p align="center" style="color: white; font-weight: 900; font-size: 18px; font-family: 'Lucida Sans';">Task Unavailable</p>
+							</div>
+						</div>
+					{% endif %}
+				{% endfor %}
+			{% else %}
+				<style>
+					.task-container{
+						height: fit-content;
+					}
+				</style>
+				<p align="center">No Tasks for now</p>
+			{% endif %}
+		</ul>
+	</div>
+}

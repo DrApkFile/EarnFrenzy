@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Agent Dashboard | {{ CUser['first_name'] }} </title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard-stylesheet.css') }}">
+
+</head>
+<body style="background: #e3e4e3;">
+	{% with messages = get_flashed_messages(with_categories=true) %}
+	{% if messages %}
+	  {% for category, message in messages %}
+	    {% if category == 'Error occurred' %}
+	      <div id="modal" class="modal-flash">
+	          <div class="modal-content-flash" style=" color: black;">
+	              <span class="close-flash" id="closeModalBtn-flash">&times;</span>
+	              <img src="{{ url_for('static', filename='media/icons/flash_fail.png') }}">
+	              <h2 style="color: #000">{{ category }}</h2>
+	              <p>{{ message }}</p>
+	          </div>
+	      </div>
+	    {% elif category == 'Success' %}
+	      <div id="modal" class="modal-flash">
+	          <div class="modal-content-flash" style=" color: black;">
+	              <span class="close-flash" id="closeModalBtn-flash">&times;</span>
+	              <img src="{{ url_for('static', filename='media/icons/flash_success.png') }}">
+	              <h2 style="color: #000">{{ category }}</h2>
+	              <p>{{ message }}</p>
+	          </div>
+	      </div>
+	    {% elif category == 'Important_join' %}
+	      <div id="modal" class="modal-flash">
+	          <div class="modal-content-flash" style=" color: black;">
+	              <span class="close-flash" id="closeModalBtn-flash">&times;</span>
+	              <img src="{{ url_for('static', filename='media/icons/flash_info.png') }}">
+	              <h2 style="color: #000">Important</h2>
+	              <p>{{ message }}</p>
+	              <a href="https://whatsapp.com/channel/0029ValBzl3HgZWWX9qf0s2s" style="color: white; text-decoration: none; width: 100%; display: flex; align-items: center; justify-content: center;">
+	              	<button class="nj-button" style="justify-content: center;">Join Channel &UpperRightArrow;</button>
+	              </a>
+	          </div>
+	      </div>
+	    {% else %}
+	      <div id="modal" class="modal-flash">
+	          <div class="modal-content-flash" style=" color: black;">
+	              <span class="close-flash" id="closeModalBtn-flash">&times;</span>
+	              <img src="{{ url_for('static', filename='media/icons/flash_info.png') }}">
+	              <h2 style="color: #000">{{ category }}</h2>
+	              <p>{{ message }}</p>
+	          </div>
+	      </div>
+	    {% endif %}
+	  {% endfor %}
+	{% endif %}
+	{% endwith %}
+	<script type="text/javascript">
+		const modal_flash = document.querySelector('.modal-flash');
+		try{
+		    const closeModalBtn_flash = document.getElementById('closeModalBtn-flash');
+
+		    // Close the modal
+		    closeModalBtn_flash.addEventListener('click', () => {
+		        modal_flash.style.display = 'none';
+		    });
+		} catch (error) {
+		    console.log('error')
+		}
+
+
+		// Close the modal if the user clicks outside the modal content
+		window.addEventListener('click', (event) => {
+		    if (event.target === modal) {
+		        modal.style.display = 'none';
+		    }
+		});
+	</script>
+	<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+		<span onclick="goToRoute('/dashboard', ['GET', {}])" style="font-size: 20px; border-bottom: 2px solid #bc0794; color: rgb(188, 7, 148); padding: 10px 0px 3px 0px; margin-left: 10px;">« Home</span>
+		<h1>Tasklify Agent</h1>
+		<p id="help-button-2"><img src="{{ url_for('static', filename='media/icons/icons8-help-48.png') }}" alt="" style="border-radius: 00pc;"></p>
+	</div>
+	<div style="margin: 10px;">
+		{% if DBORM("AgentTLFY", "user_id", CUser['id'], f=True) %}
+			<!-- <h2 style="margin: 10px;">Create Ad</h2> -->
+			
+			<div id="modal-create_task" class="modal">
+			    <div class="modal-content">
+			        <span class="close-modal" id="close-create_task-menu">&times;</span>
+			        <br>
+			        <h1 class="modal-title">Create Ad</h1>
+			        	
+			        <form action="/create-ad-task" method="POST" enctype="multipart/form-data">
+			        <form>
+			        	<div style="display: flex; align-items: center; justify-content: space-between; width: 80%;">
+			        		<p>Task Logo/Image</p>
+			        		<input type="file" name="task_image" class="nj-input">
+			        	</div>
+			        	<input type="text" name="task_name" class="nj-input" placeholder="Ad Title" required>
+			        	<textarea name="description" class="nj-input" placeholder="Ad Description (Optional)" style="height: 100px;"></textarea>
+
+			        	<select name="task_type" class="nj-input">
+			        		<option value="Ad">Task Type - Advertisment Task</option>
+			        	</select>
+
+			        	<select name="task_plan" class="nj-input">
+			        		<option value="basic">Basic - NGN 600.00 - 2 days</option>
+			        		<option value="advance">Advanced - NGN 1000.00 - 4 days</option>
+			        		<option value="premium">Premium - NGN 1200.00 - 6 days</option>
+			        	</select>
+
+			        	<input type="text" name="task_link" class="nj-input" placeholder="Ad URL" required>
+
+
+			        	<button class="nj-button" style="justify-content: center;">Create Ad</button>
+			        </form>
+			    </div>
+			</div>
+			
+			<div style="display: grid; place-items: center; background: white; margin: 10px; border-radius: 00px;">
+				<p align="center" style="font-weight: 800; font-size: 40px; margin: 10px; font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">TT {{ Thousandify(Agent['earnings']) }} </p>
+				<p align="center" style="color: grey;">Revenue Earned off {{ ToStr(FloorX(ToFloat(Thousandify(Agent['earnings']))/0.08, 0)).replace(".0", "") }} clicks </p>
+				<br>
+					<!-- <button class="nj-secondary-button" style="justify-content: center; width: 90%; margin: 10px; justify-content: center; border: 2px solid #bc0794; color: #bc0794; opacity: 0.5;">Transfer Balance to Wallet</button> -->
+			
+					<!-- <button class="nj-secondary-button" style="justify-content: center; width: 90%; margin: 10px; justify-content: center; border: 2px solid #bc0794; color: #bc0794;" onclick="goToRoute('/transfer-balance-to-nine', ['GET', {}])">Transfer Balance to Wallet</button> -->
+
+				<p align="left" style="margin: 10px; font-family: 'Lucida Sans'; color: grey;"><small>There is a bonus of TT 0.08 to be earned off every of your Ads when a user completes it.</small></p>
+
+			</div>
+			<hr>
+
+			<h2 style="margin: 10px;">Create Ad</h2>
+			<button class="nj-button" style="justify-content: center;" id="create-task">Create Ad</button>
+
+			<script type="text/javascript">
+				modal_agent_task = document.querySelector("#modal-create_task")
+				trigger_modal_agent_task = document.querySelector("#create-task")
+				close_modal_agent_task = document.querySelector("#close-create_task-menu")
+
+				trigger_modal_agent_task.addEventListener('click', ()=>{
+					modal_agent_task.style.display = "block"
+				})
+				close_modal_agent_task.addEventListener('click', ()=>{
+					modal_agent_task.style.display = "none"
+				})
+			</script>
+			<!-- <h2 style="margin: 10px;">Please wait, your agent dashboard is almost ready.</h2> -->
+		{% else %}
+			<!-- <h2>You don't have an agent account yet!</h2> -->
+			<h2>Let's get started!</h2>
+			<form action="/create-agent" method="POST">
+				<input type="text" name="agent_name" placeholder="Your Agent Name" class="nj-input" required>
+				<input type="email" name="agent_email" placeholder="Your Agent Email" class="nj-input" required>
+				<input type="number" name="agent_number" placeholder="Your Agent Phone Number" class="nj-input" required>
+				<button class="nj-button" style="justify-content: center;">Create Agent Account</button>
+			</form>
+		{% endif %}
+		<br>
+		<hr>
+		<h3><u>As an agent:</u></h3>
+		<ol>
+			<li>You'll be able to create Advertisement Tasks</li>
+			<li>You'll be able to track completion status of your Tasks</li>
+			<li>You'll be able to delete Tasks</li>
+			<li>You'll not be able to perform/complete your Tasks</li>
+			<li>You'll not be able to earn TT points from your Tasks</li>
+		</ol>
+		<!-- <div style="display: flex; align-items: center; justify-content: space-around; background: white; margin: 10px; border-radius: 00px;">
+			<p style="font-weight: 800; font-size: 40px; margin: 10px; font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">NGN 600.00 per Ad </p>
+		</div>
+		<hr> -->
+		
+		<hr>
+		<h2 align="center">Your Ads</h2>
+		{% if Tasks != [] %}
+			{% for Task in Tasks %}
+				{% if Task['task_owner'] == Agent['agent_email'] %}
+					{% if Task['task_type'] == "Ad" %}
+						<div style="position: relative;">
+							<div style="background: black;">
+								<li style="list-style: none; background: #ffd0f8; margin-top: 10px; width: 100%; border-radius: 0px; display: flex; align-items: center; justify-content: space-between; opacity: 0.4;">
+									{% if Task['image_raw'] == "Default-Logo" %}
+										<img src="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+									{% else %}
+										{% if ImagePassError(Task['image_raw']) == "false" %}
+											<img src="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+										{% else %}
+											<img src="data:{{ getMIME( Task['image_raw'] ) }};base64,{{ Task['image_raw'] }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+										{% endif %}
+									{% endif %}
+									<div style="width: 40%; margin-left: 20px;">
+										<p align="left">{{ Task['name'] }}</p>
+									</div>
+									<span style="background: #bc0794; padding: 5px; color: white; font-size: 14px;">{{ LengthFunc(PythonEval(Task['users_id_done'])) }} Clicks</span>
+									<span style="padding: 10px">Ads</span>
+								</li>
+							</div>
+
+							<div style="display: flex; align-items: center; justify-content: center; width: 90%; font-weight: bolder; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+								<p align="center" style="color: white; font-weight: 900; font-size: 18px; font-family: 'Lucida Sans';">Ad Under Review</p>
+							</div>
+						</div>
+					{% else %}
+						<a href="/my-task/2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z/{{ Task['id'] }}/2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z" style="text-decoration: none; color: black;">
+							<li style="list-style: none; background: #ffd0f8; margin-top: 10px; width: 100%; border-radius: 0px; display: flex; align-items: center; justify-content: space-between;">
+								{% if Task['image_raw'] == "Default-Logo" %}
+									<img src="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+								{% else %}
+									{% if ImagePassError(Task['image_raw']) == "false" %}
+										<img src="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+									{% else %}
+										<img src="data:{{ getMIME( Task['image_raw'] ) }};base64,{{ Task['image_raw'] }}" style="background: white; aspect-ratio: 1/1; width: 40px; padding: 20px; object-fit: cover;">
+									{% endif %}
+								{% endif %}
+								<div style="width: 40%; margin-left: 20px;">
+									<p align="left">{{ Task['name'] }}</p>
+								</div>
+								<span style="background: #bc0794; padding: 5px; color: white; font-size: 14px;">{{ LengthFunc(PythonEval(Task['users_id_done'])) }} Clicks</span>
+								<span style="padding: 10px">Ads</span>
+							</li>
+						</a>
+					{% endif %}
+				{% else %}
+					{{ pass }}
+				{% endif %}
+			{% endfor %}
+		{% else %}
+			<p align="center" style="color: grey;">No Ads created yet</p>
+			<hr>
+			<h3><u>Reasons for a Deleted Ad:</u></h3>
+			<ol>
+				<li>Invalid/Fake receipt</li>
+				<li>Harmful/Violent Ad</li>
+				<!-- <li>Language</li> -->
+			</ol>
+		{% endif %}
+	</div>
+
+<script src="{{ url_for('static', filename='js/App.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>User List - Admin - {{ CUser['username'] }} </title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard-stylesheet.css') }}">
+
+	<link rel="icon" href="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}">
+
+</head>
+<body>
+	<style type="text/css">
+		.dott{
+			aspect-ratio: 1/1;
+			width: 20px;
+			padding: 10px;
+		}
+	</style>
+	<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+		<span onclick="goToRoute('/dashboard', ['GET', {}])" style="font-size: 20px; border-bottom: 2px solid #bc0794; color: rgb(188, 7, 148); padding: 10px 0px 3px 0px; margin-left: 10px;">« Home</span>
+		<h1>Tasklify Users</h1>
+		<p id="help-button-2"><img src="{{ url_for('static', filename='media/icons/icons8-help-48.png') }}" alt="" style="border-radius: 00pc;"></p>
+	</div>
+	<div style="padding: 10px; display: flex; align-items: center; justify-content: space-between; width: 90%; background: #cdcdcd; margin: 10px;">
+		<div>
+			<p><b>Clients:</b> {{ client_count }} </p>
+			<p><b>Registered:</b> {{ clients_paid - 3 }} </p>
+			<p><b>Clients Net Value:</b> TT {{ clients_net_value }} </p>
+		</div>
+		<p><b>Admin:</b> {{ admin_count }} </p>
+	</div>
+	<div style="padding: 10px; display: flex; align-items: center; justify-content: space-between; width: 90%; background: #cdcdcd; margin: 10px; overflow-y: hidden; overflow-x: auto;">
+		
+		{% for tab in tabs %}
+			{% if active_tab == tab %}
+				<button onclick="goToRoute('/filter-user-list/{{ active_tab }}', ['GET', {}])" class="nj-button" style="width: 90%; justify-content: center;">{{ active_tab.capitalize() }}</button>	
+			{% else %}
+				<button onclick="goToRoute('/filter-user-list/{{ tab }}', ['GET', {}])" class="nj-secondary-button" style="color: #bc0794; border: 2px solid #bc0794; width: fit-content; justify-content: center;">{{ tab.capitalize() }}</button>
+			{% endif %}
+		{% endfor %}
+	</div>
+	<ol style="padding: 0;" class="ol-list">
+		{% if AllUsers %}
+			{% for AllUser in AllUsers %}
+
+				<li style="overflow-x: auto; overflow-y: hidden; padding: 10px; display: flex; align-items: center; justify-content: space-between; width: 90%; background: #cdcdcd; margin: 10px;">
+					<b>{{ AllUser['id'] }}.&nbsp;</b>
+					{% if AllUser['user_type'] == 'client' %}
+						<p>{{ AllUser['username'] }}</p>
+					{% else %}
+						<p style="color: #bc0794;">{{ AllUser['username'] }}</p>
+					{% endif %}
+					{% if AllUser['referral_earning'] == "0" %}
+						<button onclick="goToRoute('/sign-user/{{ AllUser['id'] }}', ['GET', {}])" class="nj-button" style="width: 90%; justify-content: center;">Sign</button>
+					{% else %}
+						<button onclick="goToRoute('/unsign-user/{{ AllUser['id'] }}', ['GET', {}])" class="nj-button" style="width: 90%; justify-content: center;">Unsign</button>
+					{% endif %}
+					<button onclick="goToRoute('/remove-user/{{ AllUser['id'] }}', ['GET', {}])" class="nj-button" style="width: 90%; justify-content: center;">Delete</button>
+
+					{% if AllUser['referral_earning'] == "0" %}
+						<div class="dott" style="background: red;">&nbsp;</div>
+					{% elif AllUser['referral_earning'] == "1" %}
+						<div class="dott" style="background: orange;">&nbsp;</div>
+					{% else %}
+						<div class="dott" style="background: #20d320;">&nbsp;</div>
+					{% endif %}
+				</li>
+
+			{% endfor %}
+		{% else %}
+			<style type="text/css">
+				.ol-list{
+					display: grid;
+					place-items: center;
+				}
+			</style>
+			<p align="center">None for this selection</p>
+		{% endif %}
+	</ol>
+
+<script src="{{ url_for('static', filename='js/App.js') }}"></script>
+</body>
+</html>

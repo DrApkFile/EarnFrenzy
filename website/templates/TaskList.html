@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>All Tasks - {{ CUser['username'] }} </title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard-stylesheet.css') }}">
+
+	<link rel="icon" href="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}">
+
+</head>
+<body>
+	<style type="text/css">
+		.dott{
+			aspect-ratio: 1/1;
+			width: 20px;
+			padding: 10px;
+		}
+	</style>
+	<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+		<span onclick="goToRoute('/dashboard', ['GET', {}])" style="font-size: 20px; border-bottom: 2px solid #bc0794; color: rgb(188, 7, 148); padding: 10px 0px 3px 0px; margin-left: 10px;">« Home</span>
+		<h1>Tasks</h1>
+		<p id="help-button-2"><img src="{{ url_for('static', filename='media/icons/icons8-help-48.png') }}" alt="" style="border-radius: 00pc;"></p>
+	</div>
+	<div style="padding: 10px; display: flex; align-items: center; justify-content: space-between; width: 90%; background: #cdcdcd; margin: 10px;">
+		<p>Read the description of each task before attempting it. Each Task is valued at a specified value in TT. The colored card at the end of each task signifies the congestion with <span style="color: #20d320; text-transform: capitalize;">green</span> signifing less congestion, <span style="color: orange; text-transform: capitalize;">orange</span> signifing congestion on a medium scale and <span style="color: red; text-transform: capitalize;">red</span> signifing more congestion  which may lead to the devaluation of that task.</p>
+	</div>
+	<div style="padding: 10px; display: flex; align-items: center; justify-content: space-between; width: 90%; background: #cdcdcd; margin: 10px; overflow-y: hidden; overflow-x: auto;">
+		
+		{% for tab in tabs %}
+			{% if active_tab == tab %}
+				<button onclick="goToRoute('/filter-task/{{ active_tab }}', ['GET', {}])" class="nj-button" style="width: 90%; justify-content: center;">{{ active_tab }}</button>	
+			{% else %}
+				<button onclick="goToRoute('/filter-task/{{ tab }}', ['GET', {}])" class="nj-secondary-button" style="color: #bc0794; border: 2px solid #bc0794; width: fit-content; justify-content: center;">{{ tab }}</button>
+			{% endif %}
+		{% endfor %}
+	</div>
+	<ol style="padding: 0;" class="ol-list">
+		{% if AllTasks %}
+			{% for AllTask in AllTasks %}
+				{% if WhichDevice(AllTask['task_device']) == DeviceType or WhichDevice(AllTask['task_device']) == "JustShow" %}
+					{% if AllTask['task_owner'] == CUser['email'] %}
+						{% if AllTask['task_type'] == "Ad" %}
+							<div style="position: relative;">
+								<div style="opacity: 0.4;">
+									<li style="overflow-x: auto; overflow-y: hidden; padding: 10px; display: flex; align-items: center; justify-content: space-between; width: 90%; background: #cdcdcd; margin: 10px;">
+										<!-- <b>{{ AllTasks.index(AllTask) + 1 }}.&nbsp;</b> -->
+										
+										<p style="width: 100%;">{{ AllTask['name'] }}</p>
+										
+										<!-- <div style="display: flex; align-items: center; justify-content: space-between; width:70%;"> -->
+											<button class="nj-button" style="width: 90%; justify-content: center;">View</button>
+											
+											<button class="nj-button" style="width: 90%; justify-content: center;"><a style="text-decoration: none; color: white;">Start</a></button>
+										<!-- </div> -->
+										<!-- </a> -->
+
+										{% if len(AllTask['users_id_done']) >= 10 %}
+											<div class="dott" style="background: red;">&nbsp;</div>
+										{% elif len(AllTask['users_id_done']) >= 5 %}
+											<div class="dott" style="background: orange;">&nbsp;</div>
+										{% else %}
+											<div class="dott" style="background: #20d320;">&nbsp;</div>
+										{% endif %}
+									</li>
+								</div>
+
+								<div style="display: flex; align-items: center; justify-content: center; width: 90%; font-weight: bolder; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+									<p align="center" style="color: #000000; font-weight: 900; font-size: 18px; font-family: 'Lucida Sans';">Ad Under Review <small>(others can't see this)</small></p>
+								</div>
+							</div>
+						{% else %}
+							<li style="overflow-x: auto; overflow-y: hidden; padding: 10px; display: flex; align-items: center; justify-content: space-between; width: 90%; background: #cdcdcd; margin: 10px;">
+								<!-- <b>{{ AllTasks.index(AllTask) + 1 }}.&nbsp;</b> -->
+								
+								<p style="width: 100%;">{{ AllTask['name'] }}</p>
+								
+								<!-- <div style="display: flex; align-items: center; justify-content: space-between; width:70%;"> -->
+									<button onclick="goToRoute('/my-task/2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z/{{ AllTask['id'] }}/2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z', ['GET', {}])" class="nj-button" style="width: 90%; justify-content: center;">View</button>
+									
+									<button class="nj-button" style="width: 90%; justify-content: center;"><a href="{{ AllTask['task_link'] }}" target="_blank" style="text-decoration: none; color: white;">Start</a></button>
+								<!-- </div> -->
+								<!-- </a> -->
+
+								{% if len(AllTask['users_id_done']) >= 10 %}
+									<div class="dott" style="background: red;">&nbsp;</div>
+								{% elif len(AllTask['users_id_done']) >= 5 %}
+									<div class="dott" style="background: orange;">&nbsp;</div>
+								{% else %}
+									<div class="dott" style="background: #20d320;">&nbsp;</div>
+								{% endif %}
+							</li>
+						{% endif %}
+					{% elif AllTask['task_type'] == "Ad" %}
+						{{ pass }}
+
+					{% else %}
+						<li style="overflow-x: auto; overflow-y: hidden; padding: 10px; display: flex; align-items: center; justify-content: space-between; width: 90%; background: #cdcdcd; margin: 10px;">
+							<!-- <b>{{ AllTasks.index(AllTask) + 1 }}.&nbsp;</b> -->
+							
+							<p style="width: 100%;">{{ AllTask['name'] }}</p>
+							
+							<!-- <div style="display: flex; align-items: center; justify-content: space-between; width:70%;"> -->
+								<button onclick="goToRoute('/task/2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z/{{ AllTask['id'] }}/2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z2024072435Y37C515001357Am8x2p9z/from_TaskPage', ['GET', {}])" class="nj-button" style="width: 90%; justify-content: center;">View</button>
+								
+								<button class="nj-button" style="width: 90%; justify-content: center;"><a href="{{ AllTask['task_link'] }}" target="_blank" style="text-decoration: none; color: white;">Start</a></button>
+							<!-- </div> -->
+							<!-- </a> -->
+
+							{% if len(AllTask['users_id_done']) >= 10 %}
+								<div class="dott" style="background: red;">&nbsp;</div>
+							{% elif len(AllTask['users_id_done']) >= 5 %}
+								<div class="dott" style="background: orange;">&nbsp;</div>
+							{% else %}
+								<div class="dott" style="background: #20d320;">&nbsp;</div>
+							{% endif %}
+						</li>
+						
+					{% endif %}
+				{% else %}
+					<div style="position: relative;">
+						<div style="opacity: 0.4;">
+							<li style="overflow-x: auto; overflow-y: hidden; padding: 10px; display: flex; align-items: center; justify-content: space-between; width: 90%; background: #cdcdcd; margin: 10px;">
+								<!-- <b>{{ AllTasks.index(AllTask) + 1 }}.&nbsp;</b> -->
+								
+								<p style="width: 100%;">{{ AllTask['name'] }}</p>
+								
+								<!-- <div style="display: flex; align-items: center; justify-content: space-between; width:70%;"> -->
+									<button class="nj-button" style="width: 90%; justify-content: center;">View</button>
+									
+									<button class="nj-button" style="width: 90%; justify-content: center;"><a style="text-decoration: none; color: white;">Start</a></button>
+								<!-- </div> -->
+								<!-- </a> -->
+
+								{% if len(AllTask['users_id_done']) >= 10 %}
+									<div class="dott" style="background: red;">&nbsp;</div>
+								{% elif len(AllTask['users_id_done']) >= 5 %}
+									<div class="dott" style="background: orange;">&nbsp;</div>
+								{% else %}
+									<div class="dott" style="background: #20d320;">&nbsp;</div>
+								{% endif %}
+							</li>
+						</div>
+
+						<div style="display: flex; align-items: center; justify-content: center; width: 90%; font-weight: bolder; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+							<p align="center" style="color: #000000; font-weight: 900; font-size: 18px; font-family: 'Lucida Sans';">Task Unavailable</p>
+						</div>
+					</div>
+				{% endif %}
+			{% endfor %}
+		{% else %}
+			<style type="text/css">
+				.ol-list{
+					display: grid;
+					place-items: center;
+				}
+			</style>
+			<p align="center">None for this selection</p>
+		{% endif %}
+	</ol>
+
+<script src="{{ url_for('static', filename='js/App.js') }}"></script>
+</body>
+</html>

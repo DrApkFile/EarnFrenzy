@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Withdrawal List - Admin</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dashboard-stylesheet.css') }}">
+
+	<link rel="icon" href="{{ url_for('static', filename='media/icons/TT_logo_90.png') }}">
+
+</head>
+<body>
+	<style type="text/css">
+		.dott{
+			aspect-ratio: 1/1;
+			width: 20px;
+			padding: 10px;
+		}
+	</style>
+	<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+		<span onclick="goToRoute('/dashboard', ['GET', {}])" style="font-size: 20px; border-bottom: 2px solid #bc0794; color: rgb(188, 7, 148); padding: 10px 0px 3px 0px; margin-left: 10px;">« Home</span>
+		<h1>Withdrawals</h1>
+		<p id="help-button-2"><img src="{{ url_for('static', filename='media/icons/icons8-help-48.png') }}" alt="" style="border-radius: 00pc;"></p>
+	</div>
+	<div style="padding: 10px; display: flex; justify-content: space-between; flex-direction: column; width: 90%; background: #cdcdcd; margin: 10px; overflow-y: hidden; overflow-x: auto;">
+		
+		<p align="left">Total (NGN) to review: {{ Thousandify(Alltime_NGN[0]) }} </p>
+		<p align="left">Successful (NGN): {{ Thousandify(Alltime_NGN[1]) }} </p>
+		<p align="left">Failed (NGN): {{ Thousandify(Alltime_NGN[2]) }} </p>
+	</div>
+	<div style="padding: 10px; display: flex; align-items: center; justify-content: space-between; width: 90%; background: #cdcdcd; margin: 10px; overflow-y: hidden; overflow-x: auto;">
+		
+		{% for tab in tabs %}
+			{% if active_tab == tab %}
+				<button onclick="goToRoute('/filter-withdrawal-list/{{ active_tab }}', ['GET', {}])" class="nj-button" style="width: 90%; justify-content: center;">{{ active_tab.capitalize() }}</button>	
+			{% else %}
+				<button onclick="goToRoute('/filter-withdrawal-list/{{ tab }}', ['GET', {}])" class="nj-secondary-button" style="color: #bc0794; border: 2px solid #bc0794; width: fit-content; justify-content: center;">{{ tab.capitalize() }}</button>
+			{% endif %}
+		{% endfor %}
+	</div>
+	<ol style="padding: 0;" class="ol-list">
+		{% if WithdrawalRequests %}
+			{% for WithdrawalRequest in WithdrawalRequests %}
+
+				<li style="overflow-x: auto; overflow-y: hidden; padding: 10px; display: flex; justify-content: space-between; flex-direction: column; width: 90%; background: #cdcdcd; margin: 10px;">
+					<b>{{ WithdrawalRequest['id'] }}.&nbsp;</b>
+					<p align="left"><b>Beneficiary Name</b>: {{ WithdrawalRequest['user_first_name'] }} {{ WithdrawalRequest['user_last_name'] }}</p>
+					<p align="left"><b>Beneficiary Bank</b>: {{ WithdrawalRequest['bank'] }} </p>
+					<p align="left"><b>Beneficiary Account Number</b>: {{ WithdrawalRequest['account_number'] }} </p>
+					<p align="left"><b>Beneficiary Username</b>: {{ WithdrawalRequest['username'] }} </p>
+					<p align="left"><b>Beneficiary Wallet ID</b>: {{ WithdrawalRequest['user_wallet_address'] }} </p>
+					<p align="left"><b>Date</b>: {{ DTK.clean_date(WithdrawalRequest['datestamp']) }} </p>
+					<p align="left"><b>Time</b>: {{ WithdrawalRequest['timestamp'] }} </p>
+					<p align="left"><b>Transaction ID</b>: {{ WithdrawalRequest['tid'] }} </p>
+
+					<form action="/sign-withdrwal" method="POST" style="width: 100%; display: flex; align-items: center; justify-content: space-between;">
+						<input type="hidden" name="withdrawal_id" value="{{ WithdrawalRequest['id'] }}">
+						<button class="nj-button" value="success" name="sign_statement" style="justify-content: center;">Success</button>
+						<button class="nj-secondary-button" value="failed" name="sign_statement" style="justify-content: center; color: #bc0794; border: 2px solid #bc0794;">Failed</button>
+					</form>
+				</li>
+
+			{% endfor %}
+		{% else %}
+			<style type="text/css">
+				.ol-list{
+					display: grid;
+					place-items: center;
+				}
+			</style>
+			<p align="center">None for this selection</p>
+		{% endif %}
+	</ol>
+
+<script src="{{ url_for('static', filename='js/App.js') }}"></script>
+</body>
+</html>

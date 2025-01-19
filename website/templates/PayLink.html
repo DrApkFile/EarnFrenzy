@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>{{ data['title'] }} @PayLink</title>
+	<link rel="icon" href="{{ url_for('static', filename='media/logo-white-150.png') }}">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style type="text/css">
+		body{
+			height: 100vh;
+			display: grid;
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			place-items: center;
+		}
+		form, article{
+			display: grid;
+			place-items: center;
+			background: #f5f5f5;
+			height: fit-content;
+			width: fit-content;
+			padding: 20px;
+			margin: 10px;
+			border-radius: 20px;
+		}
+		button{
+			background: #0ac803;
+			outline: none;
+			border: 0;
+			padding: 10px;
+			margin: 10px;
+			color: white;
+			width: 90%;
+			border-radius: 20px;
+		}
+		.second-div div{
+			display: flex;
+			margin: 15px;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.second-div div p:nth-child(1){
+			font-weight: 900;
+		}
+		.second-div div p:nth-child(2){
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.second-div div p:nth-child(2) button{
+			width: fit-content;
+
+		}
+		@keyframes fillBar{
+			{% for num in num_list %}
+				{{ num }}%{
+					scale: {{ num }};
+				}
+			{% endfor %}
+		}
+		/*@keyframes fadeInOut{
+			{% for num in num_list2 %}
+				{{ num * 100 }}%{
+					opacity: {{ num }};
+				}
+			{% endfor %}
+		}*/
+	</style>
+</head>
+<body>
+	<div style="position: fixed; top: 0; left: 0; display: flex; align-items: center; justify-content: space-around; width: 100%;">
+		<!-- <h1 style="color: #04c704;">NGN {{ amount }}</h1> -->
+
+		<h1 style="font-family: monospace;">
+			<span style="color: #0ac803;">@</span>Pay<span>Link</span>
+		</h1>
+	</div>
+	<div style="display: grid; place-items: center; width: 100%; font-family: monospace;" id="screen-1">
+
+		<h2 align="center">Pay with transfer<br><span style="color: #0ac803;">NGN {{ amount }}.00</span> to</h2>
+
+		<h2 align="center" style="padding: 10px; background: #cdcdcd; border-radius: 10px;">@Tasklify</h2>
+
+		<div style="width: 100%;" class="second-div">
+			<!-- <div>
+				<p>Account Name</p>
+
+				<p>Emilia Onyekanma<button>Copy</button></p>
+			</div> -->
+			<div>
+				<p>Bank</p>
+
+				<p>Moniepoint MFB<button>Copy</button></p>
+			</div>
+			<div>
+				<p>Account Name</p>
+
+				<p><span id="Account_Number">5527606279</span> <button id="copy-button">Copy</button></p>
+			</div>
+			
+		</div>
+
+		<button id="money-tfed">I have transferred the money.</button>
+		<button onclick="goToRoute('/delete-ad-task/{{ data['task_id'] }}', ['GET', {}])" style="background: transparent; color: red; border: 2px solid red; font-weight: bolder;">Cancel</button>
+	</div>
+
+	<div id="screen-2" style=" display: none;">
+		<div style="display: grid; place-items: center;">
+			<h1 style="font-family: monospace;">
+				<span style="color: #0ac803; animation: fillBar 3s infinite linear;">@</span>Pay<span>Link</span>
+			</h1>
+		</div>
+	</div>
+
+	<div id="screen-3" style="display: none;">
+		<p align="center">Upload Receipt</p>
+
+		<form action="/upload-reciept" method="POST" enctype="multipart/form-data">
+			<div style="background: #b9b9b9; border-radius: 20px; padding: 10px; width: 300px; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center;">
+				<!-- <h2 style="font-size: 30px; color: white; font-family: monospace;">+</h2> -->
+				<input type="file" name="image">
+				<input type="hidden" name="username" value="{{ data['agent']['agent_email'] }}">
+				<input type="hidden" name="task_id" value="{{ data['task_id'] }}">
+			</div>
+			<button>Upload +</button>
+		</form>
+	</div>
+
+<script src="{{ url_for('static', filename='js/App.js') }}"></script>
+<script type="text/javascript">
+	numberToCopy = document.querySelector("#Account_Number").innerHTML
+	function copyToClipboard(text) {
+		navigator.clipboard.writeText(text).then(
+		function() {
+			console.log(`Copied Link: '&#8358;{text}'`);
+		},
+		function(err) {
+			console.error(`Copied Link [Failed]: &#8358;{text}`, err);
+		}
+		);
+	}
+	document.querySelector("#copy-button").addEventListener('click', ()=>{
+		copyToClipboard(numberToCopy)
+		document.querySelector("#copy-button").innerHTML = "Copied"
+	});
+	document.querySelector("#money-tfed").addEventListener('click', ()=>{
+		document.querySelector("#screen-1").style.display = 'none'
+		document.querySelector("#screen-3").style.display = 'none'
+		document.querySelector("#screen-2").style.display = 'block'
+	})
+	document.querySelector("#money-tfed").addEventListener("click", ()=>{
+		setTimeout(()=>{
+			// window.location.href = `${window.location.href}/pay`
+			// document.querySelector(".form-pay").submit()
+			document.querySelector("#screen-1").style.display = 'none'
+			document.querySelector("#screen-2").style.display = 'none'
+			document.querySelector("#screen-3").style.display = 'block'
+		}, 3000)
+	})
+	lbt = document.querySelector(".load-bar_text")
+	setTimeout(()=>{
+		lbt.innerHTML = "Integrating Wallet to<br>Host Tasklify Account..."
+		setTimeout(()=>{
+			lbt.innerHTML = "Finishing up..."
+		}, 7000)	
+	}, 5000)
+</script>
+</body>
+</html>
